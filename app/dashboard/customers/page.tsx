@@ -9,12 +9,15 @@ export const metadata: Metadata = {
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: {
+  searchParams: Promise<{
     query?: string;
     page?: string;
-  };
+  }>;
 }) {
-  const query = searchParams?.query || '';
+  const params = await searchParams;
+
+  const query = params?.query || '';
+  const page = params?.page || '1';
 
   const customers = await fetchFilteredCustomers(query);
 
