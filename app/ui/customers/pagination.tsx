@@ -1,22 +1,20 @@
 'use client';
-
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function Pagination({ totalPages }: { totalPages: number }) {
+function PaginationContent({ totalPages }: { totalPages: number }) {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get('page')) || 1;
   const query = searchParams.get('query') || '';
-
+  
   const createPageURL = (pageNumber: number) => {
     const params = new URLSearchParams();
     if (query) params.set('query', query);
     params.set('page', pageNumber.toString());
-
-    // FIX ✔ ahora usa invoices
     return `/dashboard/invoices?${params.toString()}`;
   };
-
+  
   return (
     <div className="flex justify-center mt-4 gap-3">
       {page > 1 && (
@@ -27,9 +25,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
           Previous
         </Link>
       )}
-
       <span>Page {page} of {totalPages}</span>
-
       {page < totalPages && (
         <Link
           href={createPageURL(page + 1)}
@@ -39,5 +35,13 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
         </Link>
       )}
     </div>
+  );
+}
+
+export default function Pagination({ totalPages }: { totalPages: number }) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaginationContent totalPages={totalPages} />
+    </Suspense>
   );
 }
